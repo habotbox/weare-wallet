@@ -84,9 +84,5 @@ func runMeta(cmd *cobra.Command, args []string) error {
 
 	kp.Meta = meta
 	_, err = wallet.Write(wal, rootArgs.rootPath, metaArgs.walletOwner, metaArgs.passphrase)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

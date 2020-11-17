@@ -10,9 +10,9 @@ import (
 	"os"
 	"testing"
 
+	"code.vegaprotocol.io/go-wallet/wallet"
 	"code.vegaprotocol.io/go-wallet/wallet/crypto"
 	"code.vegaprotocol.io/go-wallet/wallet/mocks"
-	"code.vegaprotocol.io/go-wallet/wallet"
 
 	"github.com/golang/mock/gomock"
 	"github.com/julienschmidt/httprouter"
@@ -192,7 +192,7 @@ func testServiceRevokeTokenOK(t *testing.T) {
 	s.handler.EXPECT().RevokeToken(gomock.Any()).Times(1).Return(nil)
 
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -208,7 +208,7 @@ func testServiceRevokeTokenFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -236,7 +236,7 @@ func testServiceGenKeypairOK(t *testing.T) {
 
 	payload := `{"passphrase": "oh yea?"}`
 	r := httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -252,7 +252,7 @@ func testServiceGenKeypairFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -273,7 +273,7 @@ func testServiceGenKeypairFailInvalidRequest(t *testing.T) {
 	// token but no payload
 	r = httptest.NewRequest("POST", "scheme://host/path", nil)
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.GenerateKeypair)(w, r, nil)
 
@@ -290,7 +290,7 @@ func testServiceListPublicKeysOK(t *testing.T) {
 		Return([]wallet.Keypair{}, nil)
 
 	r := httptest.NewRequest("GET", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -306,7 +306,7 @@ func testServiceListPublicKeysFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -340,7 +340,7 @@ func testServiceGetPublicKeyOK(t *testing.T) {
 		Return(&kp, nil)
 
 	r := httptest.NewRequest("GET", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -356,7 +356,7 @@ func testServiceGetPublicKeyFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -383,7 +383,7 @@ func testServiceGetPublicKeyFailKeyNotFound(t *testing.T) {
 		Return(nil, wallet.ErrPubKeyDoesNotExist)
 
 	r := httptest.NewRequest("GET", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -401,7 +401,7 @@ func testServiceGetPublicKeyFailMiscError(t *testing.T) {
 		Return(nil, errors.New("an error"))
 
 	r := httptest.NewRequest("GET", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -419,7 +419,7 @@ func testServiceSignOK(t *testing.T) {
 		Times(1).Return(wallet.SignedBundle{}, nil)
 	payload := `{"tx": "some data", "pubKey": "asdasasdasd"}`
 	r := httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -444,7 +444,7 @@ func testServiceSignFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r = httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w = httptest.NewRecorder()
 
@@ -466,7 +466,7 @@ func testServiceSignFailInvalidRequest(t *testing.T) {
 	payload := `{"t": "some data", "pubKey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.SignTx)(w, r, nil)
 
@@ -476,7 +476,7 @@ func testServiceSignFailInvalidRequest(t *testing.T) {
 	payload = `{"tx": "some data", "puey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.SignTx)(w, r, nil)
 
@@ -493,7 +493,7 @@ func testServiceTaintOK(t *testing.T) {
 		Times(1).Return(nil)
 	payload := `{"passphrase": "some data"}`
 	r := httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -509,7 +509,7 @@ func testServiceTaintFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -531,7 +531,7 @@ func testServiceTaintFailInvalidRequest(t *testing.T) {
 	payload := `{"passhp": "some data", "pubKey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.TaintKey)(w, r, nil)
 
@@ -541,7 +541,7 @@ func testServiceTaintFailInvalidRequest(t *testing.T) {
 	payload = `{"passphrase": "some data", "puey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.TaintKey)(w, r, nil)
 
@@ -558,7 +558,7 @@ func testServiceUpdateMetaOK(t *testing.T) {
 		Times(1).Return(nil)
 	payload := `{"passphrase": "some data", "meta": [{"key":"ok", "value":"primary"}]}`
 	r := httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	w := httptest.NewRecorder()
 
@@ -574,7 +574,7 @@ func testServiceUpdateMetaFailInvalidRequest(t *testing.T) {
 
 	// invalid token
 	r := httptest.NewRequest("POST", "scheme://host/path", nil)
-	r.Header.Add("Authorization", "Bearer")
+	r.Header.Set("Authorization", "Bearer")
 
 	w := httptest.NewRecorder()
 
@@ -596,7 +596,7 @@ func testServiceUpdateMetaFailInvalidRequest(t *testing.T) {
 	payload := `{"passhp": "some data", "pubKey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.UpdateMeta)(w, r, nil)
 
@@ -606,7 +606,7 @@ func testServiceUpdateMetaFailInvalidRequest(t *testing.T) {
 	payload = `{"passphrase": "some data", "puey": "asdasasdasd"}`
 	r = httptest.NewRequest("POST", "scheme://host/path", bytes.NewBufferString(payload))
 	w = httptest.NewRecorder()
-	r.Header.Add("Authorization", "Bearer eyXXzA")
+	r.Header.Set("Authorization", "Bearer eyXXzA")
 
 	wallet.ExtractToken(s.UpdateMeta)(w, r, nil)
 

@@ -69,9 +69,5 @@ func runTaint(cmd *cobra.Command, args []string) error {
 	kp.Tainted = true
 
 	_, err = wallet.Write(wal, rootArgs.rootPath, taintArgs.walletOwner, taintArgs.passphrase)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
