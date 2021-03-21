@@ -1,4 +1,4 @@
-# weare Wallet
+# WEARE Wallet
 
 `wearewallet` is the command line interface for running a Wallet service, implemented in Go. It is used to sign transactions for use on [weare](#about-weare). weare Wallet creates and manages ed25519 keypairs for one or more wallets.
 
